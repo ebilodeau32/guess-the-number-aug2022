@@ -1,4 +1,4 @@
-const readline = require('readline');
+const readline = require("readline");
 const rl = readline.createInterface(process.stdin, process.stdout);
 
 function ask(questionText) {
@@ -10,9 +10,94 @@ function ask(questionText) {
 start();
 
 async function start() {
-  console.log("Let's play a game where you (human) make up a number and I (computer) try to guess it.")
-  let secretNumber = await ask("What is your secret number?\nI won't peek, I promise...\n");
-  console.log('You entered: ' + secretNumber);
-  // Now try and complete the program.
-  process.exit();
+  let min = 1;
+  let max;
+  let num = 1;
+  let humanResponse;
+  let humanResponse2 = "";
+  let newGame = "";
+  let computerGuess = Math.round((min + max) / 2);
+
+  //ORIGINAL GAME
+
+  max = await ask(
+    `Let's play a game where one of us picks a number and the other tries to guess it. Please set the highest number. It should be any number greater than 1.`
+  );
+
+  console.log(`You set ${max} as the highest number`);
+
+  console.log(`This is the max:` + max);
+  console.log(`This is the min:` + min);
+  console.log(`This is the BOTTOM computerGuess:` + computerGuess);
+
+  let secretNumber = await ask(
+    "What is your secret number?\nI won't peek, I promise...\n"
+  );
+
+  console.log("You entered: " + secretNumber);
+
+  humanResponse = await ask(
+    `Is is...${Math.round((max - min)/2)}***humanResponse?\n> Enter y for yes and n for no.`
+  );
+  humanResponse = humanResponse.toLowerCase();
+
+
+  if (humanResponse === `y`) {
+    
+    console.log(
+      `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
+    );
+    newGame = await ask(`Would you like to play again?`);
+    if (newGame === `y`) {
+      newGame = newGame.toLowerCase();
+      start();
+    } else if (newGame === `n`) {
+      process.exit();
+    }
+  } else if (humanResponse === `n`) {
+    while (num < max) {
+      //first loop
+
+      while (humanResponse === `n`) {
+        //second loop when human says guess is not correct, keep looping
+
+        if (humanResponse2 === `y`) {
+          console.log(
+            `Your number was ${computerGuess}! It took me ${num} attempt(s) to guess your number.`
+          );
+          newGame = await ask(`Would you like to play again?`);
+          if (newGame === `y`) {
+            newGame = newGame.toLowerCase();
+            start();
+          } else if (newGame === `n`) {
+            process.exit();
+          }
+        }
+
+        highLow = await ask(`Is it higher (h) or lower (l)?`);
+        highLow = highLow.toLowerCase();
+
+        if (highLow === `l`) {
+          max = computerGuess;
+          humanResponse2 = await ask(
+            `Is is...${Math.round(
+              (min + max) / 2
+            )}?\n> Enter y for yes and n for no.`
+          );
+          humanResponse2 = humanResponse2.toLowerCase();
+          computerGuess = Math.round((min + max) / 2);
+          num = num + 1;
+        } else if (highLow === `h`) {
+          min = computerGuess;
+          humanResponse2 = await ask(
+            `Is is...${Math.round((max - min)/2)}***humanResponse2?\n> Enter y for yes and n for no.`
+          );
+          humanResponse2 = humanResponse2.toLowerCase();
+          num = num + 1;
+          computerGuess = Math.round((min + max) / 2);
+        }
+      }
+    }
+    process.exit();
+  }
 }
