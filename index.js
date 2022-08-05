@@ -21,14 +21,14 @@ async function start() {
   //ORIGINAL GAME
 
   max = await ask(
-    `Let's play a game where one of us picks a number and the other tries to guess it. Please set the highest number. It should be any number greater than 1.`
+    `Let's play a game where one of us picks a number and the other tries to guess it. Please set the highest number. It should be any number greater than 1.\n`
   );
 
-  console.log(`You set ${max} as the highest number`);
+  console.log(`You set ${max} as the highest number\n`);
 
-  console.log(`This is the max:` + max);
-  console.log(`This is the min:` + min);
-  console.log(`This is the BOTTOM computerGuess:` + computerGuess);
+  //console.log(`This is the max:` + max);
+  //console.log(`This is the min:` + min);
+  //console.log(`This is the BOTTOM computerGuess:` + computerGuess);
 
   let secretNumber = await ask(
     "What is your secret number?\nI won't peek, I promise...\n"
@@ -43,7 +43,7 @@ async function start() {
 
 
   if (humanResponse === `y`) {
-    
+
     console.log(
       `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
     );
@@ -55,7 +55,7 @@ async function start() {
       process.exit();
     }
   } else if (humanResponse === `n`) {
-    while (num < max) {
+    while (num < max) {                          //change the while loop to true/false?
       //first loop
 
       while (humanResponse === `n`) {
@@ -78,11 +78,11 @@ async function start() {
         highLow = highLow.toLowerCase();
 
         if (highLow === `l`) {
-          max = computerGuess;
+          max = computerGuess;            //CHECK OUT USE OF MAX AND MIN IN THESE BLOCKS
           humanResponse2 = await ask(
             `Is is...${Math.round(
               (min + max) / 2
-            )}?\n> Enter y for yes and n for no.`
+            )}?\n> Enter y for yes and n for no. **THIS IS IF LOW`
           );
           humanResponse2 = humanResponse2.toLowerCase();
           computerGuess = Math.round((min + max) / 2);
@@ -90,7 +90,7 @@ async function start() {
         } else if (highLow === `h`) {
           min = computerGuess;
           humanResponse2 = await ask(
-            `Is is...${Math.round((max - min)/2)}***humanResponse2?\n> Enter y for yes and n for no.`
+            `Is is...${Math.round((max - min)/2)}***humanResponse2?\n> Enter y for yes and n for no.**THIS IS IF HIGH` 
           );
           humanResponse2 = humanResponse2.toLowerCase();
           num = num + 1;
