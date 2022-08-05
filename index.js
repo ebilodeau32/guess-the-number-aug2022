@@ -10,94 +10,128 @@ function ask(questionText) {
 start();
 
 async function start() {
-  let min = 1;
+  //!------ GLOBAL VARIABLES -------*/
+
+  let min = 0;
   let max;
   let num = 1;
-  let humanResponse;
-  let humanResponse2 = "";
   let newGame = "";
+  let humanResponse2 = "";
+  let keepGuessing = true;
+
+  //!-------------------------- INITIAL SETUP -----------------
+  //? Introduction and setting the max number
+
+  console.log(
+    "Let's play a game where one of us picks a number and the other tries to guess it.\n"
+  );
+
+  let highestNumber = await ask(
+    `Please set the highest number. It should be any number greater than 1.\n`
+  );
+
+  max = Number(highestNumber);
   let computerGuess = Math.round((min + max) / 2);
 
-  //ORIGINAL GAME
+  // DEBUGGING CONSOLE LOGS ------- DELETE LATER
+  //console.log(highestNumber + "<---this is the highestNumber");
+  //console.log(
+    //typeof highestNumber + "<---this is the TYPE of the highestNumber"
+  //);
 
-  max = await ask(
-    `Let's play a game where one of us picks a number and the other tries to guess it. Please set the highest number. It should be any number greater than 1.\n`
+  //console.log(max + "<-- this is the max");
+  //console.log(typeof max + "<-- this is the TYPE of the max");
+  //console.log(`${min + max} <---this is the min + max`);
+  //console.log(`You set ${highestNumber} as the highest number`);
+
+  //!-------------------------- GAME CHOICE ------------------------
+  //? Human vs. Computer
+
+  let chooseGame = await ask(
+    `Who would you like to guess the secret number? (H)uman or (C)omputer?\n`
   );
+  chooseGame = chooseGame.toLowerCase();
 
-  console.log(`You set ${max} as the highest number\n`);
+  //* ------------------ COMPUTER GUESSES GAME ---------------------
 
-  //console.log(`This is the max:` + max);
-  //console.log(`This is the min:` + min);
-  //console.log(`This is the BOTTOM computerGuess:` + computerGuess);
+  if (chooseGame === "c") {
+    console.log("You have chosen for the computer to guess the secret number.\n");
 
-  let secretNumber = await ask(
-    "What is your secret number?\nI won't peek, I promise...\n"
-  );
-
-  console.log("You entered: " + secretNumber);
-
-  humanResponse = await ask(
-    `Is is...${Math.round((max - min)/2)}***humanResponse?\n> Enter y for yes and n for no.`
-  );
-  humanResponse = humanResponse.toLowerCase();
-
-
-  if (humanResponse === `y`) {
-
-    console.log(
-      `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
+    let secretNumber = await ask(
+      `What is your secret number?\n You can choose a number between 1 and ${max}.\nI won't peek, I promise...\n`
     );
-    newGame = await ask(`Would you like to play again?`);
-    if (newGame === `y`) {
-      newGame = newGame.toLowerCase();
-      start();
-    } else if (newGame === `n`) {
-      process.exit();
-    }
-  } else if (humanResponse === `n`) {
-    while (num < max) {                          //change the while loop to true/false?
-      //first loop
+    console.log(`You entered: ${secretNumber}.\n Now let's start the game!`);
 
-      while (humanResponse === `n`) {
-        //second loop when human says guess is not correct, keep looping
+    let humanResponse = await ask(
+      `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
+    );
 
-        if (humanResponse2 === `y`) {
-          console.log(
-            `Your number was ${computerGuess}! It took me ${num} attempt(s) to guess your number.`
-          );
-          newGame = await ask(`Would you like to play again?`);
-          if (newGame === `y`) {
-            newGame = newGame.toLowerCase();
-            start();
-          } else if (newGame === `n`) {
-            process.exit();
+    humanResponse = humanResponse.toLowerCase();
+
+    if (humanResponse === `y`) {
+      console.log(
+        `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
+      );
+      newGame = await ask(`Would you like to play again?\n`);
+      if (newGame === `y`) {
+        newGame = newGame.toLowerCase();
+        start();
+      } else if (newGame === `n`) {
+        process.exit();
+      }
+    } else if (humanResponse === `n`) {
+      while (keepGuessing === true) {
+        //first loop
+
+        while (humanResponse === `n`) {
+          //second loop when human says guess is not correct, keep looping
+
+          if (humanResponse2 === `y`) {
+            console.log(
+              `Your number was ${computerGuess}! It took me ${num} attempt(s) to guess your number.\n`
+            );
+            newGame = await ask(`Would you like to play again?\n`);
+            if (newGame === `y`) {
+              newGame = newGame.toLowerCase();
+              start();
+            } else if (newGame === `n`) {
+              process.exit();
+            }
+          }
+
+          highLow = await ask(`Is it higher (h) or lower (l)?`);
+          highLow = highLow.toLowerCase();
+
+          if (highLow === `l`) {
+            max = computerGuess;
+            humanResponse2 = await ask(
+              `Is is...${Math.round(
+                (min + max) / 2
+              )}?\n> Enter y for yes and n for no.`
+            );
+            humanResponse2 = humanResponse2.toLowerCase();
+            computerGuess = Math.round((min + max) / 2);
+            num = num + 1;
+          } else if (highLow === `h`) {
+            min = computerGuess;
+            humanResponse2 = await ask(
+              `Is is...${Math.round(
+                (min + max) / 2
+              )}?\n> Enter y for yes and n for no.`
+            );
+            humanResponse2 = humanResponse2.toLowerCase();
+            num = num + 1;
+            computerGuess = Math.round((min + max) / 2);
           }
         }
-
-        highLow = await ask(`Is it higher (h) or lower (l)?`);
-        highLow = highLow.toLowerCase();
-
-        if (highLow === `l`) {
-          max = computerGuess;            //CHECK OUT USE OF MAX AND MIN IN THESE BLOCKS
-          humanResponse2 = await ask(
-            `Is is...${Math.round(
-              (min + max) / 2
-            )}?\n> Enter y for yes and n for no. **THIS IS IF LOW`
-          );
-          humanResponse2 = humanResponse2.toLowerCase();
-          computerGuess = Math.round((min + max) / 2);
-          num = num + 1;
-        } else if (highLow === `h`) {
-          min = computerGuess;
-          humanResponse2 = await ask(
-            `Is is...${Math.round((max - min)/2)}***humanResponse2?\n> Enter y for yes and n for no.**THIS IS IF HIGH` 
-          );
-          humanResponse2 = humanResponse2.toLowerCase();
-          num = num + 1;
-          computerGuess = Math.round((min + max) / 2);
-        }
       }
+      process.exit();
     }
-    process.exit();
+
+    //* -------------------- HUMAN GUESSES GAME -----------------------
+  } else if (chooseGame === "h") {
+    console.log("Run the Human guessing program");
+
+
   }
 }
