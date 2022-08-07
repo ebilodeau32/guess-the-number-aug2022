@@ -14,6 +14,10 @@ async function start() {
   let max;
   let keepGuessing = true;
   let newGame = "";
+  let cleanInput = function cleanInput(word) {
+    let cleanWord = word.toLowerCase();
+    return cleanWord;
+  };
 
   //* Variables for Computer Guesses Game
   let min = 0;
@@ -23,8 +27,6 @@ async function start() {
   let cheating = false;
 
   //!-------------------------- INITIAL SETUP -----------------
-  //? Introduction and setting the max number
-
   console.log(
     "Let's play a game where one of us picks a number and the other tries to guess it.\n"
   );
@@ -40,7 +42,8 @@ async function start() {
   let chooseGame = await ask(
     `Who would you like to guess the secret number? (H)uman or (C)omputer?\n`
   );
-  chooseGame = chooseGame.toLowerCase();
+
+  chooseGame = cleanInput(chooseGame);
 
   //* ------------------ COMPUTER GUESSES ---------------------
   if (chooseGame === "c") {
@@ -57,7 +60,7 @@ async function start() {
       `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
     );
 
-    humanResponse = humanResponse.toLowerCase();
+    humanResponse = cleanInput(humanResponse);
 
     while (keepGuessing === true) {
       //first loop to continue game
@@ -68,7 +71,7 @@ async function start() {
         );
         newGame = await ask(`Would you like to play again?\n`);
         if (newGame === `y`) {
-          newGame = newGame.toLowerCase();
+          newGame = cleanInput(newGame);
           start();
         } else if (newGame === `n`) {
           process.exit();
@@ -82,8 +85,8 @@ async function start() {
               `Your number was ${computerGuess}! It took me ${num} attempt(s) to guess your number.\n`
             );
             newGame = await ask(`Would you like to play again?\n`);
+            newGame = cleanInput(newGame);
             if (newGame === `y`) {
-              newGame = newGame.toLowerCase();
               start();
             } else if (newGame === `n`) {
               process.exit();
@@ -91,7 +94,7 @@ async function start() {
           }
 
           highLow = await ask(`Is it higher (h) or lower (l)?`);
-          highLow = highLow.toLowerCase();
+          highLow = cleanInput(highLow);
 
           if (highLow === `l`) {
             //check to make sure the secretNumber is actually lower than computer guess
@@ -102,7 +105,7 @@ async function start() {
               humanResponse2 = await ask(
                 `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
               );
-              humanResponse2 = humanResponse2.toLowerCase();
+              humanResponse2 = cleanInput(humanResponse2);
               num = num + 1;
             } else {
               console.log("Run cheat detector!");
@@ -129,7 +132,7 @@ async function start() {
               humanResponse2 = await ask(
                 `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
               );
-              humanResponse2 = humanResponse2.toLowerCase();
+              humanResponse2 = cleanInput(humanResponse2);
               num = num + 1;
             } else {
               cheating = true;
@@ -164,7 +167,7 @@ async function start() {
     num = 0;
 
     let computerRandomNum = Math.floor(Math.random() * max + 1);
-    console.log(computerRandomNum);
+    console.log(computerRandomNum); //!<------------------------------DELETE THIS 
 
     console.log("You have chosen to guess the secret number.\n");
 
@@ -197,8 +200,8 @@ async function start() {
           );
           keepGuessing = false;
           newGame = await ask(`Would you like to play again?\n`);
+          newGame = cleanInput(newGame);
           if (newGame === `y`) {
-            newGame = newGame.toLowerCase();
             start();
           } else if (newGame === `n`) {
             process.exit();
