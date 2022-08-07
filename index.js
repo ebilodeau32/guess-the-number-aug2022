@@ -11,13 +11,14 @@ start();
 
 async function start() {
   //!------ GLOBAL VARIABLES -------*/
-
-  let min = 0;
   let max;
-  let num = 1;
-  let newGame = "";
-  let humanResponse2 = "";
   let keepGuessing = true;
+  let newGame = "";
+
+  //* Variables for Computer Guesses Game
+  let min = 0;
+  let num = 1;
+  let humanResponse2 = "";
   let cheatAnswer = "";
   let cheating = false;
 
@@ -35,16 +36,13 @@ async function start() {
   max = Number(highestNumber);
   let computerGuess = Math.round((min + max) / 2);
 
-  //!-------------------------- GAME CHOICE ------------------------
-  //? Human vs. Computer
-
+  //!-------------------- GAME CHOICE - HUMAN OR COMPUTER ------------------
   let chooseGame = await ask(
     `Who would you like to guess the secret number? (H)uman or (C)omputer?\n`
   );
   chooseGame = chooseGame.toLowerCase();
 
   //* ------------------ COMPUTER GUESSES ---------------------
-
   if (chooseGame === "c") {
     console.log(
       "You have chosen for the computer to guess the secret number.\n"
@@ -61,21 +59,21 @@ async function start() {
 
     humanResponse = humanResponse.toLowerCase();
 
-    if (humanResponse === `y`) {
-      console.log(
-        `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
-      );
-      newGame = await ask(`Would you like to play again?\n`);
-      if (newGame === `y`) {
-        newGame = newGame.toLowerCase();
-        start();
-      } else if (newGame === `n`) {
-        process.exit();
-      }
-    } else if (humanResponse === `n`) {
-      while (keepGuessing === true) {
-        //first loop to continue game
+    while (keepGuessing === true) {
+      //first loop to continue game
 
+      if (humanResponse === `y`) {
+        console.log(
+          `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
+        );
+        newGame = await ask(`Would you like to play again?\n`);
+        if (newGame === `y`) {
+          newGame = newGame.toLowerCase();
+          start();
+        } else if (newGame === `n`) {
+          process.exit();
+        }
+      } else if (humanResponse === `n`) {
         while (humanResponse === `n`) {
           //second loop when human says guess is not correct, keep looping
 
@@ -152,13 +150,18 @@ async function start() {
             }
           }
         }
+      } else {
+        humanResponse = await ask(
+          `I'm not familiar with that command. Is is...${computerGuess}?\n> Enter y for yes and n for no.`
+        );
       }
-      process.exit();
     }
+    process.exit();
 
     //* -------------------- HUMAN GUESSES -----------------------
   } else if (chooseGame === "h") {
     console.log("Run the Human guessing program");
+    num = 0;
 
     let computerRandomNum = Math.floor(Math.random() * max + 1);
     console.log(computerRandomNum);
@@ -170,21 +173,28 @@ async function start() {
     );
 
     if (humanGuess == computerRandomNum) {
-      console.log(`Correct! My number was ${computerRandomNum}`);
+      console.log(
+        `Correct! My number was ${computerRandomNum}.\nIt took you 1 attempt to guess my number.`
+      );
     } else {
       console.log("That's not my number. I'll give you a hint...");
 
       while (keepGuessing === true) {
         if (humanGuess < computerRandomNum) {
+          num = num + 1;
           humanGuess = await ask(
             `My number is higher than ${humanGuess}.\nGuess again.\n`
           );
         } else if (humanGuess > computerRandomNum) {
+          num = num + 1;
           humanGuess = await ask(
             `My number is lower than ${humanGuess}.\nGuess again.\n`
           );
         } else {
-          console.log(`Correct! My number was ${computerRandomNum}`);
+          num = num + 1;
+          console.log(
+            `Correct! My number was ${computerRandomNum}\nIt took you ${num} attempts to guess my number.`
+          );
           keepGuessing = false;
           newGame = await ask(`Would you like to play again?\n`);
           if (newGame === `y`) {
