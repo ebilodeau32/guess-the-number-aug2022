@@ -167,7 +167,6 @@ async function start() {
     num = 0;
 
     let computerRandomNum = Math.floor(Math.random() * max + 1);
-    console.log(computerRandomNum); //!<------------------------------DELETE THIS 
 
     console.log("You have chosen to guess the secret number.\n");
 
