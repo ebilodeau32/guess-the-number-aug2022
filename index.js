@@ -35,17 +35,6 @@ async function start() {
   max = Number(highestNumber);
   let computerGuess = Math.round((min + max) / 2);
 
-  // DEBUGGING CONSOLE LOGS ------- DELETE LATER
-  //console.log(highestNumber + "<---this is the highestNumber");
-  //console.log(
-  //typeof highestNumber + "<---this is the TYPE of the highestNumber"
-  //);
-
-  //console.log(max + "<-- this is the max");
-  //console.log(typeof max + "<-- this is the TYPE of the max");
-  //console.log(`${min + max} <---this is the min + max`);
-  //console.log(`You set ${highestNumber} as the highest number`);
-
   //!-------------------------- GAME CHOICE ------------------------
   //? Human vs. Computer
 
@@ -72,17 +61,6 @@ async function start() {
 
     humanResponse = humanResponse.toLowerCase();
 
-    // if(secretNumber === computerGuess) {
-    //   console.log(`${secretNumber} <-----this is the secret number.`)
-    //   console.log(`${computerGuess} <-----this is the computer guess.`)
-    //   console.log("Cheat detector activated!");
-
-    // } else {
-
-    // console.log("run the program as usual")
-
-    // }
-
     if (humanResponse === `y`) {
       console.log(
         `Your number was ${computerGuess}! It took me ${num} tries to guess your number.`
@@ -96,7 +74,7 @@ async function start() {
       }
     } else if (humanResponse === `n`) {
       while (keepGuessing === true) {
-        //first loop
+        //first loop to continue game
 
         while (humanResponse === `n`) {
           //second loop when human says guess is not correct, keep looping
@@ -119,15 +97,14 @@ async function start() {
 
           if (highLow === `l`) {
             //check to make sure the secretNumber is actually lower than computer guess
-            if (computerGuess < secretNumber) {
+            if (computerGuess > secretNumber) {
               max = computerGuess;
+              computerGuess = Math.round((min + max) / 2);
+
               humanResponse2 = await ask(
-                `Is is...${Math.round(
-                  (min + max) / 2
-                )}?\n> Enter y for yes and n for no.`
+                `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
               );
               humanResponse2 = humanResponse2.toLowerCase();
-              computerGuess = Math.round((min + max) / 2);
               num = num + 1;
             } else {
               console.log("Run cheat detector!");
@@ -135,54 +112,40 @@ async function start() {
 
               while (cheating === true) {
                 cheatAnswer = await ask(
-                  `Are you sure your number isn't lower than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
+                  `Are you sure your number is lower than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
                 );
 
-                if (cheatAnswer === "y") {
-                  cheatAnswer = await ask(
-                    `Are you sure your number isn't lower than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
-                  );
-                } else if (cheatAnswer === "n") {
+                if (cheatAnswer === "n") {
                   cheating = false;
                   console.log("Glad we figured that out. Let's keep playing!");
                   humanResponse2 = await ask(
-                    `Is is...${Math.round(
-                      (min + max) / 2
-                    )}?\n> Enter y for yes and n for no.`
+                    `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
                   );
                 }
               }
             }
           } else if (highLow === `h`) {
-            if (computerGuess > secretNumber) {
+            if (computerGuess < secretNumber) {
               min = computerGuess;
+              computerGuess = Math.round((min + max) / 2);
               humanResponse2 = await ask(
-                `Is is...${Math.round(
-                  (min + max) / 2
-                )}?\n> Enter y for yes and n for no.`
+                `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
               );
               humanResponse2 = humanResponse2.toLowerCase();
               num = num + 1;
-              computerGuess = Math.round((min + max) / 2);
             } else {
               cheating = true;
 
               while (cheating === true) {
                 cheatAnswer = await ask(
-                  `Are you sure your number isn't higher than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
+                  `Are you sure your number is higher than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
                 );
 
-                if (cheatAnswer === "y") {
-                  cheatAnswer = await ask(
-                    `Are you sure your number isn't higher than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
-                  );
-                } else if (cheatAnswer === "n") {
+                if (cheatAnswer === "n") {
                   cheating = false;
                   console.log("Glad we figured that out. Let's keep playing!");
                   humanResponse2 = await ask(
-                    `Is is...${Math.round(
-                      (min + max) / 2
-                    )}?\n> Enter y for yes and n for no.`
+                    `Is is...${computerGuess}?\n> Enter y for yes and n for no.`
                   );
                 }
               }
@@ -233,29 +196,5 @@ async function start() {
         }
       }
     }
-  }
-}
-
-//!-------------------------- FUNCTIONS ------------------------
-
-async function cheatDetector(computerGuess) {
-  let cheatAnswer = "";
-
-  if (highLow === "h") {
-    cheatAnswer = await ask(
-      `Are you sure your number isn't higher than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
-    );
-  } else if (highLow === "l") {
-    cheatAnswer = await ask(
-      `Are you sure your number isn't lower than ${computerGuess}?\n Enter (Y)es or (N)o.\n`
-    );
-  } else {
-    console.log("I'm not sure what that means.");
-  }
-
-  if (cheatAnswer === "y") {
-    cheatDetector(computerGuess);
-  } else if (cheatAnswer === "n") {
-    console.log("Glad we figured that out. Let's keep playing!");
   }
 }
